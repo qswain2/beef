@@ -32,19 +32,33 @@ if(typeof beef === 'undefined' && typeof window.beef === 'undefined') {
 		// An array containing all the BeEF JS components.
 		components: new Array(),
 
-                /**
-                 * Adds a function to display debug messages (wraps console.log())
-                 * @param: {string} the debug string to return
-                 */
-                debug: function(msg) {
-                    if (!<%= @client_debug %>) return;
-                    if (typeof console == "object" && typeof console.log == "function") {
-                        console.log(msg);
-                    } else {
-                        // TODO: maybe add a callback to BeEF server for debugging purposes
-                        //window.alert(msg);
-                    }
-                },
+
+        CmdResultEnum: {
+            "ERROR": -1,
+            "UNKNOWN": 0,
+            "SUCCESS": 1
+        },
+
+        CmdResult:function (cmd_id, status, data) {
+            this.cmd_id = cmd_id;
+            this.status = status;
+            this.data = JSON.stringify(data);
+            // add other fields if needed, like module name/category/command id/etc..
+        },
+
+        /**
+         * Adds a function to display debug messages (wraps console.log())
+         * @param: {string} the debug string to return
+         */
+        debug: function(msg) {
+            if (!<%= @client_debug %>) return;
+            if (typeof console == "object" && typeof console.log == "function") {
+                console.log(msg);
+            } else {
+                // TODO: maybe add a callback to BeEF server for debugging purposes
+                //window.alert(msg);
+            }
+        },
 
 		/**
 		 * Adds a function to execute.

@@ -20,6 +20,7 @@ module Models
     property :creationdate, String, :length => 15, :lazy => false
     property :label, Text, :lazy => false
     property :instructions_sent, Boolean, :default => false
+    property :status, Integer, :default => 0
 
     has n, :results
 
@@ -36,7 +37,7 @@ module Models
       raise Exception::TypeError, '"hook_session_id" needs to be a string' if not hook_session_id.string?
       raise Exception::TypeError, '"command_id" needs to be an integer' if not command_id.integer?
       raise Exception::TypeError, '"command_friendly_name" needs to be a string' if not command_friendly_name.string?
-      raise Exception::TypeError, '"result" needs to be a hash' if not result.hash?
+      #raise Exception::TypeError, '"result" needs to be a hash' if not result.hash?
 
       # @note get the hooked browser structure and id from the database
       hooked_browser = BeEF::Core::Models::HookedBrowser.first(:session => hook_session_id) || nil
@@ -50,8 +51,13 @@ module Models
       command = first(:id => command_id.to_i, :hooked_browser_id => hooked_browser_id) || nil
       raise Exception::TypeError, "command is nil" if command.nil?
 
+      cmd_result = JSON.parse(result)
+      puts "command.rb ->" + cmd_result.inspect
+      if cmd_result['status'] != nil
+        command.update(:status => cmd_result['status'])
+      end
       # @note create the entry for the results 
-      command.results.new(:hooked_browser_id => hooked_browser_id, :data => result.to_json, :date => Time.now.to_i)
+      command.results.new(:hooked_browser_id => hooked_browser_id, :data => cmd_result['data'], :date => Time.now.to_i)
       command.save
 
       # @note log that the result was returned

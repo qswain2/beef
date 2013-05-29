@@ -58,9 +58,10 @@ module BeEF
           command_friendly_name = command.friendlyname
           (print_error "command friendly name is empty"; return) if command_friendly_name.empty?
           command_results = get_param(@data, 'results')
+          puts "commands.rb ->" +command_results.inspect
           (print_error "command results are empty"; return) if command_results.empty?
           # @note save the command module results to the datastore and create a log entry
-          command_results = {'data' => command_results}
+          # command_results = {'data' => command_results}
           BeEF::Core::Models::Command.save_result(beefhook, command_id, command_friendly_name, command_results)
 
         end
