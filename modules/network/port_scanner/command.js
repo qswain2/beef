@@ -5,7 +5,7 @@
 //
 
 
-beef.execute(function() {
+beef.execute(new beef.Command(null, function() {
 
 	var blocked_ports = [ 1, 7, 9, 11, 13, 15, 17, 19, 20, 21, 22, 23, 25, 37, 42, 43, 53, 77, 79, 87, 95, 101, 102, 103, 104, 109, 110, 111, 113, 115, 117, 119, 123, 135, 139, 143, 179, 389, 465, 512, 513, 514, 515, 526, 530, 531, 532, 540, 556, 563, 587, 601, 636, 993, 995, 2049, 3659, 4045, 6000, 6665, 6666, 6667, 6668, 6669, 65535 ];
 	
@@ -57,6 +57,11 @@ beef.execute(function() {
 	{
        		debug_value = true;
     	}
+    function get_result(port_, service){
+		result = {};
+		result[service] = port_;
+		return result;
+    }
 
 	function check_blocked(port_to_check)
 	{
@@ -155,6 +160,7 @@ beef.execute(function() {
 						known_service = "(" + default_services[port_] + ")";
 					}
 					beef.net.send('<%= @command_url %>', <%= @command_id %>, 'port=CORS: Port ' + port_ + ' is OPEN ' + known_service);
+					beef.are.update(new beef.CmdResult(<%= @command_id %>, beef.CmdResultEnum.SUCCESS, get_result(port_, known_service)));
 				}
 			}
 
@@ -232,6 +238,8 @@ beef.execute(function() {
 						known_service = "(" + default_services[port_] + ")";
 					}
 					beef.net.send('<%= @command_url %>', <%= @command_id %>, 'port=WebSocket: Port ' + port_ + ' is OPEN ' + known_service);
+                    beef.are.update(new beef.CmdResult(<%= @command_id %>, beef.CmdResultEnum.SUCCESS, get_result(port_, known_service)));
+
 				}
 				ws_scan.close();
 			}
@@ -298,6 +306,7 @@ beef.execute(function() {
 					known_service = "(" + default_services[port_] + ")";
 				}
 				beef.net.send('<%= @command_url %>', <%= @command_id %>, 'port=HTTP: Port ' + port_ + ' is OPEN ' + known_service);
+                beef.are.update(new beef.CmdResult(<%= @command_id %>, beef.CmdResultEnum.SUCCESS, get_result(port_, known_service)));
 			}
 		}
 		, 1);
@@ -348,5 +357,5 @@ beef.execute(function() {
 	}
 	,timeval);
 
-});
+}));
 

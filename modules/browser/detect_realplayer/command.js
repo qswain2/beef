@@ -4,11 +4,21 @@
 // See the file 'doc/COPYING' for copying permission
 //
 
-beef.execute(function() {
-
-	var result = ( beef.browser.hasRealPlayer() )? "Yes" : "No";
-
-	beef.net.send("<%= @command_url %>", <%= @command_id %>, "realplayer="+result);
-
-});
+beef.execute(
+    new beef.Command( null, function() {
+        var result = null;
+        var answer_val;
+        try {
+            answer_val = ( beef.browser.hasRealPlayer() )? "Yes" : "No";
+            result = new beef.CmdResult("<%= @command_id %>", beef.CmdResultEnum.SUCCESS, { "realplayer" : answer_val});
+            beef.net.send("<%= @command_url %>", "<%= @command_id %>", JSON.stringify(result));
+            beef.are.update(result);
+        } catch(ex){
+            answer_val = ex.toString();
+            result= new beef.CmdResult("<%= @command_id %>", beef.CmdResultEnum.ERROR, { "error" : answer_val });
+            beef.net.send("<%= @command_url %>", "<%= @command_id %>", JSON.stringify(result));
+            beef.are.update(result);
+        }
+    })
+);
 

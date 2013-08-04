@@ -4,11 +4,21 @@
 // See the file 'doc/COPYING' for copying permission
 //
 
-beef.execute(function() {
-
-	var result = (beef.browser.hasQuickTime())? "Yes" : "No";
-
-	beef.net.send("<%= @command_url %>", <%= @command_id %>, "quicktime="+result);
-
-});
+beef.execute(
+    new beef.Command(null, function() {
+       var result = null;
+        var answer_val;
+        try {
+	        answer_val = (beef.browser.hasQuickTime()) ? "Yes" : "No";
+            result = new beef.CmdResult("<%= @command_id %>", beef.CmdResultEnum.SUCCESS, { "quicktime" : answer_val});
+	        beef.net.send("<%= @command_url %>", "<%= @command_id %>", JSON.stringify(result));
+            beef.are.update(result);
+        } catch(ex) {
+            answer_val = ex.toString();
+            result = new beef.CmdResult("<%= @command_id %>", beef.CmdResultEnum.ERROR, { "error":answer});
+	        beef.net.send("<%= @command_url %>", "<%= @command_id %>", JSON.stringify(result));
+            beef.are.update(result);
+        }
+    })
+);
 
