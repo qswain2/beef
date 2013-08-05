@@ -27,7 +27,7 @@ ZombieTab = function(zombie) {
         listeners:{
             afterrender:function(component){
                 // Hide auto-run tab
-                component.hideTabStripItem(autorun_tab);
+                // component.hideTabStripItem(autorun_tab);
             }
         }
 	});

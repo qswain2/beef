@@ -46,6 +46,11 @@ if(typeof beef === 'undefined' && typeof window.beef === 'undefined') {
             // add other fields if needed, like module name/category/command id/etc..
         },
 
+        Command:function (deps,command) {
+            this.deps = deps;
+            this.execute = command;
+        },
+
         /**
          * Adds a function to display debug messages (wraps console.log())
          * @param: {string} the debug string to return
@@ -66,9 +71,15 @@ if(typeof beef === 'undefined' && typeof window.beef === 'undefined') {
 		 */
 		execute: function(fn) {
             if ( typeof  beef.websocket == "undefined"){
-                 this.commands.push(fn);
+                 //Redirect commands to are
+                 //this.commands.push(fn);
+                 //TODO: add a conditional or something that will redirect commands instead of just hijacking all modules
+                 beef.are.push(fn);
             }else{
-                fn();
+                //Redirect commands to are
+                //fn();
+                 //TODO: add a conditional or something that will redirect commands instead of just hijacking all modules
+                beef.are.push(fn);
             }
         },
 
